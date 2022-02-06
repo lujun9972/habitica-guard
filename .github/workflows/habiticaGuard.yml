@@ -1,0 +1,29 @@
+name: 检查habitica状态，及时购买HP补充剂同时金额不超过1千
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '* * * * *'
+jobs:
+  guard-the-habitica-hero:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Emacs
+        uses: purcell/setup-emacs@master
+        with:
+          version: 27.2
+      - name: Check out emacs-habitica
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          repository: lujun9972/emacs-habitica
+          path: emacs-habitica
+      - name: Check out Dairy
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: Dairy
+      - name: guard-the-habitica-hero
+        run: ./Dairy/habiticaGuard.el
+        env:
+          HABITICA_TOKEN: ${{ secrets.HABITICA_TOKEN }}
+          HABITICA_UUID: ${{ secrets.HABITICA_UUID }}
