@@ -17,13 +17,13 @@ jobs:
           fetch-depth: 0
           repository: lujun9972/emacs-habitica
           path: emacs-habitica
-      - name: Check out Dairy
+      - name: Check out guard
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          path: Dairy
+          path: Guard
       - name: guard-the-habitica-hero
-        run: ./Dairy/habiticaGuard.el
+        run: ./Guard/habiticaGuard.el
         env:
           HABITICA_TOKEN: ${{ secrets.HABITICA_TOKEN }}
           HABITICA_UUID: ${{ secrets.HABITICA_UUID }}
