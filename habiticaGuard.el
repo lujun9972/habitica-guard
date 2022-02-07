@@ -39,6 +39,16 @@
     (unless quest-data
       (habitica--send-request (format "/groups/party/quests/accept") "POST" ""))))
 
+(defun habitica-allocate-stat-point ()
+  (let* ((stat (getenv "HABITICA-ALLOCATE-STAT"))
+         (valid-stats '("str" "con" "int" "per"))
+         (user-data (habitica--send-request (format "/user?userFields=stats") "GET" ""))
+         (stats-data (assoc-default 'stats user-data))
+         (points (assoc-default 'points stats-data)))
+    (when (and (> points 0)
+               (member stat valid-stats))
+      (habitica--send-request (format "user/allocate?stat=%s" stat) "POST" ""))))
+
 (defun habitica-buy-armoire ()
   (let* ((habitica-keep-gold (or (getenv "HABITICA-KEEP-GOLD")
                                  "1000"))
@@ -52,4 +62,5 @@
     (habitica-recover-by-skill))
   (habitica-recover-by-potion)
   (habitica-buy-armoire)
-  (habitica-accept-party-quest))
+  (habitica-accept-party-quest)
+  (habitica-allocate-stat-point))
