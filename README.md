@@ -15,4 +15,4 @@ Settings -> Secrets -> Actions -> New repository secret
 + `HABITICA_TOKEN`: API令牌
 + `HABITICA_UUID`: 用户ID
 + `HABITICA_KEEP_GOLD`: 保留的金币数，多于这个金币则会去购买宝箱
-+ `HABITICA-ALLOCATE-STAT`: 点数分配到哪个属性，可选值为 `str`, `con`, `int`, `per`
++ `HABITICA_ALLOCATE_STAT`: 点数分配到哪个属性，可选值为 `str`, `con`, `int`, `per`

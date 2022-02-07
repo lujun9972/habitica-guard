@@ -40,7 +40,7 @@
       (habitica--send-request (format "/groups/party/quests/accept") "POST" ""))))
 
 (defun habitica-allocate-stat-point ()
-  (let* ((stat (getenv "HABITICA-ALLOCATE-STAT"))
+  (let* ((stat (getenv "HABITICA_ALLOCATE_STAT"))
          (valid-stats '("str" "con" "int" "per"))
          (user-data (habitica--send-request (format "/user?userFields=stats") "GET" ""))
          (stats-data (assoc-default 'stats user-data))
