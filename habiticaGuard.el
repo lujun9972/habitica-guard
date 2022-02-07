@@ -32,8 +32,12 @@
       (habitica-update-stats my-stats))))
 
 (defun habitica-accept-party-quest ()
-  (when (= 0 (length (habitica--send-request "/challenges/groups/party" "GET" "")))
-    (habitica--send-request (format "/groups/party/quests/accept") "POST" "")))
+  (let* ((user-data (habitica--send-request (format "/user?userFields=party") "GET" ""))
+         (party-data (assoc-default 'party user-data))
+         (quest-data (assoc-default 'quest party-data)))
+    (message "quest-data:%s" quest-data)
+    (unless quest-data
+      (habitica--send-request (format "/groups/party/quests/accept") "POST" ""))))
 
 (defun habitica-buy-armoire ()
   (let* ((habitica-keep-gold (or (getenv "HABITICA-KEEP-GOLD")
