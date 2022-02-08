@@ -6,9 +6,18 @@
 ;; habitica健康检查
 (setq workplace (getenv "GITHUB_WORKSPACE"))
 (load (expand-file-name "emacs-habitica/habitica.el" workplace))
-(habitica-cron)
 (habitica-tasks)
 (message "Habitica:HP:%s,GOLD:%S,Class" habitica-hp habitica-gold habitica-class)
+
+(defun habitica-api-need-cron-p ()
+  "Need to run cron or not."
+  (let ((needsCron (assoc-default 'needsCron (habitica-api-get-profile))))
+    (message "needsCron=%s" needsCron)
+    (equal needsCron t)))
+
+(defun habitica-run-cron ()
+  (when (habitica-api-need-cron-p)
+    (habitica-cron)))
 
 (defun habitica-update-stats (stats)
   (setq habitica-mp (cdr (assoc-string "mp" stats)))
@@ -64,6 +73,7 @@
       (setq habitica-gold (- habitica-gold 100)))))
 
 (ignore-errors
+  (habitica-run-cron)
   (when (string= habitica-class "healer")
     (habitica-recover-by-skill))
   (habitica-recover-by-potion)
