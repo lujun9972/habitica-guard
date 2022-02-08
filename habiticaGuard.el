@@ -8,8 +8,7 @@
 (load (expand-file-name "emacs-habitica/habitica.el" workplace))
 (habitica-cron)
 (habitica-tasks)
-(message "Habitica:HP:%s,GOLD:%S" habitica-hp habitica-gold)
-;; (message "Habitica:HP:%s,GOLD:%S,Class" habitica-hp habitica-gold habitica-class)
+(message "Habitica:HP:%s,GOLD:%S,Class" habitica-hp habitica-gold habitica-class)
 
 (defun habitica-update-stats (stats)
   (setq habitica-mp (cdr (assoc-string "mp" stats)))
@@ -40,6 +39,8 @@
     (message "quest-data:%s" quest-data)
     (when (string= "" completed-data)
       (habitica--send-request (format "/groups/party/quests/accept") "POST" ""))))
+
+(habitica--send-request (format "/user") "GET" "")
 
 (defun habitica-allocate-stat-point ()
   (let* ((stat (getenv "HABITICA_ALLOCATE_STAT"))
