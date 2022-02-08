@@ -34,9 +34,9 @@
 (defun habitica-accept-party-quest ()
   (let* ((user-data (habitica--send-request (format "/user?userFields=party") "GET" ""))
          (party-data (assoc-default 'party user-data))
-         (quest-data (assoc-default 'quest party-data)))
-    (message "quest-data:%s" quest-data)
-    (unless quest-data
+         (quest-data (assoc-default 'quest party-data))
+         (completed-data (assoc-default 'completed)))
+    (when (string= "" completed-data)
       (habitica--send-request (format "/groups/party/quests/accept") "POST" ""))))
 
 (defun habitica-allocate-stat-point ()
