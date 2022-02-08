@@ -45,11 +45,9 @@
          (user-data (habitica--send-request (format "/user?userFields=stats") "GET" ""))
          (stats-data (assoc-default 'stats user-data))
          (points (assoc-default 'points stats-data)))
-    (message "points:%s,stat:%s" points stat)
     (when (and (> points 0)
                (member stat valid-stats))
-      (message "allocating point")
-      (habitica--send-request (format "user/allocate?stat=%s" stat) "POST" ""))))
+      (habitica--send-request (format "/user/allocate?stat=%s" stat) "POST" ""))))
 
 (defun habitica-buy-armoire ()
   (let* ((habitica-keep-gold (or (getenv "HABITICA-KEEP-GOLD")
