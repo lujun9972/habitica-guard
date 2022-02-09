@@ -59,14 +59,15 @@
          (valid-stats '("str" "con" "int" "per"))
          (user-data (habitica--send-request (format "/user?userFields=stats") "GET" ""))
          (stats-data (assoc-default 'stats user-data))
-         (points (assoc-default 'points stats-data)))
+         (points (assoc-default 'points stats-data))
+         (flags-data (assoc-default 'flags user-data))
+         (classSelected (assoc-default 'classSelected flags-data)))
     (message "remain %s points,allocate %s point" points stat)
-    (while (and (> points 0)
+    (while (and (equal classSelected t)
+                (> points 0)
                 (member stat valid-stats))
       (habitica--send-request (format "/user/allocate?stat=%s" stat) "POST" "")
       (setq points (- points 1)))))
-
-
 
 (defun habitica-buy-armoire ()
   (let* ((habitica-keep-gold (or (getenv "HABITICA-KEEP-GOLD")
