@@ -15,22 +15,25 @@
     (message "needsCron=%s" needsCron)
     (equal needsCron t)))
 
-(defun habitica-run-cron ()
-  (when (habitica-api-need-cron-p)
-    (habitica-cron)))
-
 (defun habitica-update-stats (stats)
   (setq habitica-mp (cdr (assoc-string "mp" stats)))
   (setq habitica-hp (cdr (assoc-string "hp" stats)))
   (setq habitica-gold (cdr (assoc-string "gp" stats))))
 
-(defun habitica-recover-by-potion ()
+(defun habitica-auto-run-cron ()
+  "自动运行cron"
+  (when (habitica-api-need-cron-p)
+    (habitica-cron)))
+
+(defun habitica-auto-recover-by-potion ()
+  "通过药剂回血"
   (while (and  (< habitica-hp (- habitica-max-hp 10))
                (> habitica-gold 15))
     (let ((stats (habitica--send-request "/user/buy-health-potion" "POST" "")))
       (habitica-update-stats stats))))
 
-(defun habitica-recover-by-skill ()
+(defun habitica-auto-recover-by-skill ()
+  "通过治疗技能回血"
   (while (and  (< habitica-hp (- habitica-max-hp 10))
                (> habitica-mp 25))
     (let* ((result (habitica-api-cast-skill "healAll"))
@@ -39,7 +42,8 @@
            (my-stats (cdr (assoc-string "stats" me))))
       (habitica-update-stats my-stats))))
 
-(defun habitica-accept-party-quest ()
+(defun habitica-auto-accept-party-quest ()
+  "自动接受 party quest"
   (let* ((user-data (habitica--send-request (format "/user?userFields=party") "GET" ""))
          (party-data (assoc-default 'party user-data))
          (quest-data (assoc-default 'quest party-data))
@@ -54,7 +58,8 @@
 
 (habitica--send-request (format "/user") "GET" "")
 
-(defun habitica-allocate-stat-point ()
+(defun habitica-auto-allocate-stat-point ()
+  "自动分配属性点"
   (let* ((stat (getenv "HABITICA_ALLOCATE_STAT"))
          (valid-stats '("str" "con" "int" "per"))
          (user-data (habitica--send-request (format "/user?userFields=stats") "GET" ""))
@@ -69,7 +74,8 @@
       (habitica--send-request (format "/user/allocate?stat=%s" stat) "POST" "")
       (setq points (- points 1)))))
 
-(defun habitica-buy-armoire ()
+(defun habitica-auto-buy-armoire ()
+  "自动抽奖"
   (let* ((habitica-keep-gold (or (getenv "HABITICA-KEEP-GOLD")
                                  "1000"))
          (habitica-keep-gold (string-to-number habitica-keep-gold)))
@@ -78,11 +84,22 @@
       (habitica--send-request "/user/buy-armoire" "POST" "")
       (setq habitica-gold (- habitica-gold 100)))))
 
+(defun habitica-auto-buy-inventory ()
+  "自动购买装备"
+  (let* ((assoc-key-fn (apply-partially #'assoc-default 'key))
+         (inventory-data (habitica--send-request "/user/inventory/buy" "GET" ""))
+         (inventory-keys (mapcar assoc-key-fn inventory-data))
+         (reward-data (habitica--send-request "/user/in-app-rewards" "GET" ""))
+         (buy-fn (lambda (key)
+                   (habitica--send-request (format "/user/buy/%s" key) "POST" ""))))
+    (mapc buy-fn inventory-keys)))
+
 (ignore-errors
-  (habitica-run-cron)
+  (habitica-auto-run-cron)
   (when (string= habitica-class "healer")
-    (habitica-recover-by-skill))
-  (habitica-recover-by-potion)
-  (habitica-buy-armoire)
-  (habitica-accept-party-quest)
-  (habitica-allocate-stat-point))
+    (habitica-auto-recover-by-skill))
+  (habitica-auto-recover-by-potion)
+  (habitica-auto-buy-armoire)
+  (habitica-auto-accept-party-quest)
+  (habitica-auto-allocate-stat-point)
+  (habitica-auto-buy-inventory))
