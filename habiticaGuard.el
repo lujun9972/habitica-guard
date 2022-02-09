@@ -63,7 +63,6 @@
     (message "remain %s points,allocate %s point" points stat)
     (while (and (> points 0)
                 (member stat valid-stats))
-      (message "remain %s points,allocate %s point" points stat)
       (habitica--send-request (format "/user/allocate?stat=%s" stat) "POST" "")
       (setq points (- points 1)))))
 

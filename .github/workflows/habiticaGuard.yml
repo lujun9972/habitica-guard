@@ -28,3 +28,5 @@ jobs:
         env:
           HABITICA_TOKEN: ${{ secrets.HABITICA_TOKEN }}
           HABITICA_UUID: ${{ secrets.HABITICA_UUID }}
+          HABITICA_ALLOCATE_STAT: ${{ secrets.HABITICA_ALLOCATE_STAT }}
+          HABITICA_KEEP_GOLD: ${{ secrets.HABITICA_KEEP_GOLD }}
