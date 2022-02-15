@@ -52,15 +52,33 @@
       (habitica-api-buy-armoire)
       (setq habitica-gold (- habitica-gold 100)))))
 
+(defun habitica-auto--buy-item-from (items-data)
+  "自动购买 ITEMS-DATA 中的 item"
+  (let* ((assoc-key-fn (apply-partially #'assoc-default 'key))
+         (item-keys (mapcar assoc-key-fn items-data))
+         (buy-fn (lambda (key)
+                   (let* ((the-item (cl-find-if
+                                     (lambda (item)
+                                       (equal key (funcall assoc-key-fn item)))
+                                     items-data))
+                          (pinned (assoc-default 'pinned the-item))
+                          (currency (assoc-default 'currency the-item))
+                          (value (assoc-default 'value the-item)))
+                     (message "key:%s,pinned:%s,currency:%s,value:%s" key pinned currency value)
+                     (when (and (not pinned)
+                                (string= currency "gold")
+                                (< value habitica-gold))
+                       (message "Buy %s using %s %ss" key value currency)
+                       (habitica--send-request (format "/user/buy/%s" key) "POST" "")
+                       (setq habitica-gold (- habitica-gold value)))))))
+    (mapc buy-fn item-keys)))
+
 (defun habitica-auto-buy-inventory ()
   "自动购买装备"
-  (let* ((assoc-key-fn (apply-partially #'assoc-default 'key))
-         (inventory-data (habitica--send-request "/user/inventory/buy" "GET" ""))
-         (inventory-keys (mapcar assoc-key-fn inventory-data))
-         (reward-data (habitica--send-request "/user/in-app-rewards" "GET" ""))
-         (buy-fn (lambda (key)
-                   (habitica--send-request (format "/user/buy/%s" key) "POST" ""))))
-    (mapc buy-fn inventory-keys)))
+  (let* ((inventory-data (habitica--send-request "/user/inventory/buy" "GET" ""))
+         (reward-data (habitica--send-request "/user/in-app-rewards" "GET" "")))
+    (habitica-auto--buy-item-from inventory-data)
+    (habitica-auto--buy-item-from reward-data)))
 
 (ignore-errors
   (habitica-auto-run-cron)
