@@ -112,8 +112,6 @@
     (habitica-auto--buy-item-from inventory-data)
     (habitica-auto--buy-item-from reward-data)))
 
-(habitica-auto-buy-inventory)
-
 (ignore-errors
   (habitica-auto-run-cron)
   (when (string= habitica-class "healer")
