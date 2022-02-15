@@ -84,14 +84,11 @@
       (habitica--send-request "/user/buy-armoire" "POST" "")
       (setq habitica-gold (- habitica-gold 100)))))
 
-(defun habitica-auto-buy-inventory ()
-  "自动购买装备"
+(defun habitica-auto--buy-item-from (items-data)
+  "自动购买 ITEMS-DATA 中的 item"
   (let* ((assoc-key-fn (apply-partially #'assoc-default 'key))
-         (inventory-data (habitica--send-request "/user/inventory/buy" "GET" ""))
-         (inventory-keys (mapcar assoc-key-fn inventory-data))
-         (reward-data (habitica--send-request "/user/in-app-rewards" "GET" ""))
-         (reward-keys (mapcar assoc-key-fn reward-data))
-         (buy-fn (lambda (items-data key)
+         (item-keys (mapcar assoc-key-fn items-data))
+         (buy-fn (lambda (key)
                    (let* ((the-item (cl-find-if
                                      (lambda (item)
                                        (equal key (funcall assoc-key-fn item)))
@@ -103,10 +100,19 @@
                      (when (and (not pinned)
                                 (string= currency "gold")
                                 (< value habitica-gold))
+                       (message "Buy %s using %s %ss" key value currency)
                        (habitica--send-request (format "/user/buy/%s" key) "POST" "")
                        (setq habitica-gold (- habitica-gold value)))))))
-    (mapc (apply-partially buy-fn inventory-data) inventory-keys)
-    (mapc (apply-partially buy-fn reward-data) reward-keys)))
+    (mapc buy-fn item-keys)))
+
+(defun habitica-auto-buy-inventory ()
+  "自动购买装备"
+  (let* ((inventory-data (habitica--send-request "/user/inventory/buy" "GET" ""))
+         (reward-data (habitica--send-request "/user/in-app-rewards" "GET" "")))
+    (habitica-auto--buy-item-from inventory-data)
+    (habitica-auto--buy-item-from reward-data)))
+
+(habitica-auto-buy-inventory)
 
 (ignore-errors
   (habitica-auto-run-cron)
