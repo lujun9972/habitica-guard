@@ -11,7 +11,17 @@
 
 (defun habitica-auto-run-cron ()
   "自动运行cron"
-  (habitica-cron))
+  (when (habitica-api-need-cron-p)
+    (habitica-api-cron)
+    (let* ((skill (getenv "HABITICA_DAILY_SKILL"))
+           (count (or (getenv "HABITICA_DAILY_SKILL_COUNT")
+                      "0"))
+           (count (string-to-number count)))
+      (when skill
+        (mapc (lambda (_)
+                (habitica-api-cast-skill skill))
+              (number-sequence 1 count))))))
+
 
 (defun habitica-auto-recover-by-potion ()
   "通过药剂回血"
