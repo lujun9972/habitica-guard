@@ -7,7 +7,7 @@
 (setq workplace (getenv "GITHUB_WORKSPACE"))
 (load (expand-file-name "emacs-habitica/habitica.el" workplace))
 (habitica-tasks)
-(message "Habitica:HP:%s,GOLD:%S,Class" habitica-hp habitica-gold habitica-class)
+(message "Habitica:HP:%s,GOLD:%s,Class %s" habitica-hp habitica-gold habitica-class)
 
 (defun habitica-auto-run-cron ()
   "自动运行cron"
@@ -92,11 +92,17 @@
     (habitica-auto--buy-item-from reward-data)))
 
 (ignore-errors
+  (message "自动运行cron, 并施展增益技能")
   (habitica-auto-run-cron)
+  (message "自动加血")
   (when (string= habitica-class "healer")
     (habitica-auto-recover-by-skill))
   (habitica-auto-recover-by-potion)
+  (message "自动买宝箱")
   (habitica-auto-buy-armoire)
+  (message "自动接受party 任务")
   (habitica-auto-accept-party-quest)
+  (message "自动分配属性点")
   (habitica-auto-allocate-stat-point)
+  (message "自动买装备")
   (habitica-auto-buy-inventory))
