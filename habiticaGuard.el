@@ -52,7 +52,7 @@
          (remain-points (habitica-allocate-a-stat-point)))
     (while (and remain-points
                 (> remain-points 0))
-      (setq remain-points (habitica-allocate-a-stat-point)))))
+      (setq remain-points (habitica-allocate-a-stat-point stat)))))
 
 (defun habitica-auto-buy-armoire ()
   "自动抽奖"
