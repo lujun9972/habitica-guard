@@ -49,8 +49,7 @@
 (defun habitica-auto-allocate-stat-point ()
   "自动分配属性点"
   (let* ((stat (getenv "HABITICA_ALLOCATE_STAT"))
-         (remain-points (habitica-allocate-a-stat-point)))
-    (message "DEBUG:%s" stat)
+         (remain-points (habitica-allocate-a-stat-point stat)))
     (while (and remain-points
                 (> remain-points 0))
       (setq remain-points (habitica-allocate-a-stat-point stat)))))
