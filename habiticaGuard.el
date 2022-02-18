@@ -26,6 +26,7 @@
 (defun habitica-auto-recover-by-potion ()
   "通过药剂回血"
   (while (< habitica-hp (- habitica-max-hp 10))
+    (message "need to buy health-potion")
     (habitica-buy-health-potion)))
 
 (defun habitica-auto-recover-by-skill ()
