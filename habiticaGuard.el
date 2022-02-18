@@ -12,7 +12,9 @@
 (defun habitica-auto-run-cron ()
   "自动运行cron"
   (when (habitica-api-need-cron-p)
+    (message "自动运行 cron")
     (habitica-api-cron)
+    (message "自动施展增益魔法")
     (let* ((skill (getenv "HABITICA_DAILY_SKILL"))
            (count (or (getenv "HABITICA_DAILY_SKILL_COUNT")
                       "0"))
