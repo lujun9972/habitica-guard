@@ -15,15 +15,12 @@
     (message "自动运行 cron")
     (habitica-api-cron)
     (message "自动施展增益魔法")
-    (let* ((skill (getenv "HABITICA_DAILY_SKILL"))
-           (count (or (getenv "HABITICA_DAILY_SKILL_COUNT")
-                      "0"))
-           (count (string-to-number count)))
-      (when skill
-        (mapc (lambda (_)
-                (habitica-api-cast-skill skill))
-              (number-sequence 1 count))))))
-
+    ;; HABITICA_DAILY_SKILLS的格式为"SKILL[ TARGET_ID];SKILL[ TARGET_ID]" 
+    (let* ((skills (split-string (getenv "HABITICA_DAILY_SKILLS") ";"))
+           (skill-target-list (mapcar #'split-string skills)))
+      (mapc (lambda (skill-target)
+              (apply #'habitica-api-cast-skill skill-target))
+            skill-target-list))))
 
 (defun habitica-auto-recover-by-potion ()
   "通过药剂回血"
