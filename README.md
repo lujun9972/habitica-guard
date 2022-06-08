@@ -18,7 +18,7 @@ Settings -> Secrets -> Actions -> New repository secret
 + `HABITICA_ALLOCATE_STAT`: 点数分配到哪个属性，可选值为 `str`, `con`, `int`, `per`。其他值或留空不会自动分配点数
 + `HABITICA_DAILY_SKILLS`: 每日使用的增益魔法，为空则不自动使用增益魔法. `HABITICA_DAILY_SKILLS` 的格式为`SKILL[ TARGET_ID];SKILL[ TARGET_ID]` 
 
-## Skill Key to Name Mapping
+## 技能关键字与名字的对应关系
 
 + Mage: fireball="Burst of Flames", mpheal="Ethereal Surge", earth="Earthquake", frost="Chilling Frost"
 
