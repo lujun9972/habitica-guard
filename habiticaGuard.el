@@ -47,8 +47,10 @@
   "自动分配属性点"
   (let* ((stat (getenv "HABITICA_ALLOCATE_STAT"))
          (remain-points (habitica-allocate-a-stat-point stat)))
+    (message "剩余点数： %s" remain-points)
     (while (and remain-points
                 (> remain-points 0))
+      (message "分配点数到： %s" stat)
       (setq remain-points (habitica-allocate-a-stat-point stat)))))
 
 (defun habitica-auto-buy-armoire ()
