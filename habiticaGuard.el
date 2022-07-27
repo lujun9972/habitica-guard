@@ -2,6 +2,7 @@
 ":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
 
 (require 'cl-lib)
+(setq debug-on-error t)
 (setq network-security-level 'low)
 ;; habitica健康检查
 (setq workplace (getenv "GITHUB_WORKSPACE"))
