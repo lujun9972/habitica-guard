@@ -62,6 +62,7 @@
     (while (and (> habitica-keep-gold 0)
                 (> habitica-gold habitica-keep-gold)
                 (> habitica-gold 100))
+      (message "剩余金币%s,预留金币%s,还可以继续抽奖" habitica-gold habitica-keep-gold)
       (habitica-api-buy-armoire)
       (setq habitica-gold (- habitica-gold 100)))))
 
