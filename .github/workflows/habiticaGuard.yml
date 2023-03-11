@@ -15,13 +15,13 @@ jobs:
       - name: Check out emacs-habitica
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           repository: lujun9972/emacs-habitica
           path: emacs-habitica
       - name: Check out guard
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           path: Guard
       - name: guard-the-habitica-hero
         run: ./Guard/habiticaGuard.el
